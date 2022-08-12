@@ -1,15 +1,25 @@
 {
-  "packageDirectories": [
-    {
-      "path": "force-app",
+    "packageDirectories": [
+        {
+            "path": "force-app",
             "package": "JP Org Connector",
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
-      "default": true
+            "default": true
+        },
+        {
+            "path": "force-app",
+            "package": "orgConnector",
+            "versionName": "ver 0.1",
+            "versionNumber": "0.1.0.NEXT",
+            "default": false
+        }
+    ],
+    "name": "OrgConnector",
+    "namespace": "",
+    "sfdcLoginUrl": "https://login.salesforce.com",
+    "sourceApiVersion": "55.0",
+    "packageAliases": {
+        "orgConnector": "0Ho3X0000004CNoSAM"
     }
-  ],
-  "name": "OrgConnector",
-  "namespace": "",
-  "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "55.0"
 }

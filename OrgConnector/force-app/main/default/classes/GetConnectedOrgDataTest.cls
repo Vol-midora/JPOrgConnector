@@ -112,7 +112,7 @@ private class GetConnectedOrgDataTest {
             HttpResponse res = new HTTPResponse();
             res.setHeader('Content-Type', 'application/JSON');
             if (!toReply.isEmpty()) {
-                GetProductionData.QueryResult answer = new GetProductionData.QueryResult();
+                GetConnectedOrgData.QueryResult answer = new GetConnectedOrgData.QueryResult();
                 answer.nextRecordsUrl = replyMore ? 'string' : null;
                 answer.records = toReply;
                 

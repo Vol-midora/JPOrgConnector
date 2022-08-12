@@ -70,7 +70,7 @@ public class GetConnectedOrgData {
             if (sync) {
                 while (String.isNotBlank(result.nextRecordsUrl)) {
                     result = getResults(result.nextRecordsUrl);
-                    toProcess.addAll((List<Price__c>) result.records);
+                    toProcess.addAll(result.records);
                 }                
             }
             processRecords(toProcess);

@@ -55,4 +55,12 @@ public class MyProcessor extends GetConnectedOrgData.Processor { //declaration o
 in order to launch it via queueable you only need to run instead of proc.fetchData(true) run System.EnqueueJob(new GetConnectedOrgData.GetDataQueueable(proc));
 it will automatically chunk the transaction into queueables to avoid timeout if post-processing is complex. 
 
+About GetConnectedOrgErrorHelper
+upsertLoggingError accepts the 3 params:
+toProcess - collection of records to DML
+externalIdField - Schema.SObjectField. if null, a non-field upsert will be attempted.
+errorPrefix - prefix of the error message. 
+
+It attempts the error-safe DML and collects the DML errors into custom class. Do with them what you will - debug or persist in the log object of your org.
+
 Have fun, and wish you a great day/week/life!
