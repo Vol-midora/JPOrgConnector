@@ -1,0 +1,58 @@
+/*
+ * Jakub "Midora" Paliński, 2022
+ * OrgConnector pattern
+*/
+
+Purpose
+The purpose of the package is to faciliate the migration of between different SF orgs. It's aimed to use with small to medium quantity of data (several hundred, several thousand)
+It provides the overall pattern of connection via predefined queries while offering the flexible extension possibilities, including from anonymous apex.
+
+Post-deployment steps
+In order to efficiently use the package, the following steps are necessary:
+1. Establishing the connection between the source org (the org from which the data will be transferred) and target org (the org when data are to be inserted/upserted, the one in which the package is installed)
+	a. Source ORG: create a connected app:  “Setup => App Manager ” and click on New Connected App
+	b. populate all required data
+	c. Enable OAuth Settings 
+	d. In “Callback URL” provide temporary url (e.g. https://www.test.salesforce.com/ - it will be replaced later)
+	e. select scopes at least full and perform requests at any time, save
+	f. go to "Manage Consumer Details", confirm your identity, and copy consumer secret and consumer key
+	g. Target org: go to Setup -> Auth. Providers -> new. Provider type - enter Salesforce. Enter copied consumer key and secret. In default scope enter full refresh_token and save.
+	h. Once saved, Auth. Provider will generate Callback URL. copy it and enter it in Source ORG in created connected app as a callback url.
+	i. Target Org -> Setup ->Named Credentials -> new. As url type url of the source org*. Identity type = Named Principal, Authentication Protocol = Oauth 2.0, Auth provider = indicate created Auth Provider.Enter the same scope as in the Auth Provider
+	j. Check “Start Authentication Flow on Save” and Save. This will trigger authentication in Source Org - complete this step to establish connection.
+2. Enter the API name of the NAme Credentials as the org-default ConnectedOrgSetting__c in the NC__c field.
+
+Most frequent issues:
+-> when saving NC, there's oauth error: either scope of Connected App oauth is too narrow, or the scopes between Auth.Provider and Named Credentials do not match.
+-> NC successfully established, but the methods in the code return with error 403: amend the URL of the source org in the Named Credential (you can look it up in debug log, should be in response body under "location" tag)
+
+
+How to use?
+Package offers 2 modes:
+- queueable - for the larger portions of data
+- direct. 
+The decision which to use depends on the complexity of the required post-processing.
+
+Example of use in Anonymous apex
+*****
+MyProcessor proc = new MyProcessor ();
+proc.query = null; //this is not required. if you don't set a query, it will be build automatically considering all createable or updateable fields (depending on proc.isCreateable), excluding lookups, existing simultaneously in both orgs. But if feel free to assign set value of the query and retrieve only part of the fields, or fields from related objects etc. 
+proc.fetchData(true);
+public class MyProcessor extends GetConnectedOrgData.Processor { //declaration of your own processor
+    
+    public MyProcessor () {
+        this.wherePart = ' WHERE IsValid__c = true AND ExternalId__c != null'; //whatever you wish, as long as it makes sense. Needs to start with WHERE
+        this.createable = true; 
+        this.objType = MyObject__c.SObjectType; //sobject to query. 
+    }
+    
+    //most important method here: what to do with retrieved records? e.g. how to map them to existing objects via external keys, whom to assign them etc
+    public override void processRecords(List<SObject> toProcess) {
+        GetConnectedOrgErrorHelper.upsertLoggingError(toProcess, MyObject__c.ExternalId__c, 'MyObject__c migration error');
+    }
+}
+*******
+in order to launch it via queueable you only need to run instead of proc.fetchData(true) run System.EnqueueJob(new GetConnectedOrgData.GetDataQueueable(proc));
+it will automatically chunk the transaction into queueables to avoid timeout if post-processing is complex. 
+
+Have fun, and wish you a great day/week/life!
