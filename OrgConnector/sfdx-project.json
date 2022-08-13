@@ -9,17 +9,25 @@
         },
         {
             "path": "force-app",
-            "package": "orgConnector",
+            "package": "JPorgConnector",
+            "versionName": "ver 0.1",
+            "versionNumber": "0.1.0.NEXT",
+            "default": false
+        },
+        {
+            "path": "force-app",
+            "package": "JPdataMigrator",
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
             "default": false
         }
     ],
-    "name": "OrgConnector",
+    "name": "JPorgConnector",
     "namespace": "",
     "sfdcLoginUrl": "https://login.salesforce.com",
     "sourceApiVersion": "55.0",
     "packageAliases": {
-        "orgConnector": "0Ho3X0000004CNoSAM"
+        "JPorgConnector": "0Ho3X0000004CNoSAM",
+        "JPdataMigrator": "0Ho670000004CAVCA2"
     }
 }
