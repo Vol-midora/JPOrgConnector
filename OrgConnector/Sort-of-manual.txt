@@ -1,6 +1,7 @@
 /*
  * Jakub "Midora" Paliński, 2022
- * OrgConnector pattern
+ * data migration pattern
+ * Source code at https://github.com/Vol-midora/JPOrgConnector/tree/master/OrgConnector
 */
 
 Purpose
